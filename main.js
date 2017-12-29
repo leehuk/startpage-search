@@ -16,7 +16,7 @@ $(document).ready(function() {
 
 		if(ev.keyCode == 27) {
 			menusearch = '';
-			menuClear();
+			menuBuild();
 		} else if(ev.keyCode == 8) {
 			menusearch = menusearch.slice(0, -1);
 			menutimeout = window.setTimeout(menuBuild, 350);
@@ -28,15 +28,21 @@ $(document).ready(function() {
 		} else if (ev.keyCode >= 49 && ev.keyCode <= 49+maxmenucount-1) {
 			console.log("Redirecting to " + menuhotkey[ev.keyCode-49]);
 			document.location = menuhotkey[ev.keyCode-49];
+		} else if (ev.keyCode == 13) {
+			console.log("Redirecting to " + menuhotkey[0]);
+			document.location = menuhotkey[0];
+
 		} else {
 			console.log("Ignoring " + ev.key + " " + ev.keyCode);
 		}
+
+		$('#searchterm').html(menusearch);
 	});
 });
 
 function menuClear() {
 	var content = $('div.content');
-	$(content).empty();
+	content.empty();
 	menuhotkey = [];
 }
 

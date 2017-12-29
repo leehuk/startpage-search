@@ -11,34 +11,48 @@ var menuhotkey = [];
 $(document).ready(function() {
 	menuBuild();
 
-	$('body').on("keydown", function(ev) {
-		window.clearTimeout(menutimeout);
-
-		if(ev.keyCode == 27) {
-			menusearch = '';
-			menuBuild();
-		} else if(ev.keyCode == 8) {
-			menusearch = menusearch.slice(0, -1);
-			menutimeout = window.setTimeout(menuBuild, 350);
-			ev.preventDefault();
-		// a-z || 0-9
-		} else if(ev.keyCode >= 65 && ev.keyCode <= 90) {
-			menusearch += ev.key;
-			menutimeout = window.setTimeout(menuBuild, 350);
-		} else if (ev.keyCode >= 49 && ev.keyCode <= 49+maxmenucount-1) {
-			console.log("Redirecting to " + menuhotkey[ev.keyCode-49]);
-			document.location = menuhotkey[ev.keyCode-49];
-		} else if (ev.keyCode == 13) {
-			console.log("Redirecting to " + menuhotkey[0]);
-			document.location = menuhotkey[0];
-
-		} else {
-			console.log("Ignoring " + ev.key + " " + ev.keyCode);
-		}
-
-		$('#searchterm').html(menusearch);
-	});
+	$('body').on("keydown", handleKey);
 });
+
+function handleKey(ev) {
+	var buildmenu = false;
+	var buildmenudefer = false;
+	var target = false;
+
+	window.clearTimeout(menutimeout);
+
+	// Escape, revert menu to default
+	if(ev.keyCode == 27) {
+		menusearch = '';
+		buildmenu = true;
+	// Backspace, remove last item from search term
+	} else if(ev.keyCode == 8) {
+		menusearch = menusearch.slice(0, -1);
+		buildmenudefer = true;
+		// stop browsers interpreting this as "back"
+		ev.preventDefault();
+	// Enter, go to the first target
+	} else if(ev.keyCode == 13) {
+		target = 0;
+	// a-z, update search term
+	} else if(ev.keyCode >= 65 && ev.keyCode <= 90) {
+		menusearch += ev.key;
+		buildmenudefer = true;
+	// 1-9, go to selected target
+	} else if(ev.keyCode >= 49 && ev.keyCode <= 49+maxmenucount-1) {
+		target = ev.keyCode-49;
+	}
+
+	$('#searchterm').html(menusearch);
+	
+	if(buildmenu) {
+		menuBuild();
+	} else if(buildmenudefer) {
+		menutimeout = window.setTimeout(menuBuild, 350);
+	} else if(target !== false && menuhotkey[target] !== undefined) {
+		document.location = menuhotkey[target];
+	}
+}
 
 function menuClear() {
 	var content = $('div.content');

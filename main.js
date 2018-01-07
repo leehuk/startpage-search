@@ -90,6 +90,10 @@ function menuBuildItem(element) {
 	if(typeof element.icon !== 'undefined') {
 		$('<img/>').attr('src', menuiconurl + element.icon).appendTo(contentfig);
 	}
+	if(typeof element.locicon !== 'undefined') {
+		$('<img/>').attr('src', 'locicons/' + element.locicon).appendTo(contentfig);
+	}
+
 
 	var contentcaption = $('<figcaption/>').addClass('contentcaption').appendTo(contentfig);
 	$('<span/>').html(element.name).appendTo(contentcaption);
